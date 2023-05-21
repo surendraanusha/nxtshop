@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client"
 import { Fragment, useState,useEffect } from 'react'
 import { Dialog, Disclosure, Menu, Transition } from '@headlessui/react'
@@ -5,6 +6,8 @@ import { XMarkIcon } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, FunnelIcon, MinusIcon, PlusIcon, Squares2X2Icon } from '@heroicons/react/20/solid'
 import ProductCard from '@/components/ProductCard/page'
 import {BsSearch} from 'react-icons/bs'
+import Loader from '@/components/Loader/page'
+import ConnectionLost from '@/components/Connection/page'
 
 const sortOptions = [
   { name: 'Price: Low to High', href: '#', current: false },
@@ -13,54 +16,63 @@ const sortOptions = [
 
 const filters = [
   {
-    id: 'color',
-    name: 'Color',
-    options: [
-      { value: 'white', label: 'White', checked: false },
-      { value: 'beige', label: 'Beige', checked: false },
-      { value: 'blue', label: 'Blue', checked: true },
-      { value: 'brown', label: 'Brown', checked: false },
-      { value: 'green', label: 'Green', checked: false },
-      { value: 'purple', label: 'Purple', checked: false },
-    ],
-  },
-  {
     id: 'category',
     name: 'Category',
     options: [
-      { value: 'new-arrivals', label: 'New Arrivals', checked: false },
-      { value: 'sale', label: 'Sale', checked: false },
-      { value: 'travel', label: 'Travel', checked: true },
-      { value: 'organization', label: 'Organization', checked: false },
-      { value: 'accessories', label: 'Accessories', checked: false },
+      { value: '1', label: 'Clothing'},
+      { value: '2', label: 'Electronics'},
+      { value: '3', label: 'Appliances'},
+      { value: '4', label: 'Grocery'},
+      { value: '5', label: 'Toys'},
     ],
   },
   {
-    id: 'size',
-    name: 'Size',
+    id: 'Rating',
+    name: 'Rating',
     options: [
-      { value: '2l', label: '2L', checked: false },
-      { value: '6l', label: '6L', checked: false },
-      { value: '12l', label: '12L', checked: false },
-      { value: '18l', label: '18L', checked: false },
-      { value: '20l', label: '20L', checked: false },
-      { value: '40l', label: '40L', checked: true },
+      { value: '4', imageUrl: 'https://assets.ccbp.in/frontend/react-js/rating-four-stars-img.png',label:'imageUrl'},
+      { value: '3', imageUrl: 'https://assets.ccbp.in/frontend/react-js/rating-three-stars-img.png',label:'imageUrl'},
+      { value: '2', imageUrl: 'https://assets.ccbp.in/frontend/react-js/rating-two-stars-img.png',label:'imageUrl'},
+      { value: '1', imageUrl: 'https://assets.ccbp.in/frontend/react-js/rating-one-star-img.png',label:'imageUrl'}
     ],
   },
+  
 ]
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
+const apiStatusConstants = {
+  initial: 'INITIAL',
+  success: 'SUCCESS',
+  failure: 'FAILURE',
+  inProgress: 'IN_PROGRESS',
 }
 
-export default function Example() {
+// function classNames(...classes) {
+//   return classes.filter(Boolean).join(' ')
+// }
+
+export default function Products() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const [ProductsArray,serProductsArray] = useState([])
   const [PrimeProduct,setPrimeProductArray] = useState([])
+  const [apiStatus,setApiStatus] = useState(apiStatusConstants.initial)
+  const [productName,setProductName] = useState('')
+  const [arrayLength,setLength] = useState()
+  const [activeOptionId,setActiveOptionId] = useState('')
+  const [activeCategoryId,setActiveCategoryId] = useState('')
+  const [activeRatingId,setActiveRatingId] = useState('')
+
 
   useEffect(()=>{
-    const getProducts = async () => {
-      const ApiUrl = `https://apis.ccbp.in/products`
+
+    getProducts();
+
+    getPrimeDeals();
+
+  },[])
+
+  const getPrimeDeals = async () => {
+    setApiStatus(apiStatusConstants.inProgress)
+      const ApiUrl = `https://apis.ccbp.in/prime-deals`
       // const jwtToken = Cookies.get('jwtToken')
       const Token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJhaHVsIiwicm9sZSI6IlBSSU1FX1VTRVIiLCJpYXQiOjE2MjMwNjU1MzJ9.D13s5wN3Oh59aa_qtXMo3Ec4wojOx0EZh8Xr5C5sRkU`
       const options = {
@@ -72,42 +84,113 @@ export default function Example() {
       const response = await fetch(ApiUrl,options)
       if(response.ok){
         const productData = await response.json()
-        console.log(productData.products)
-        serProductsArray(productData.products)
+        // console.log(productData)
+        setPrimeProductArray(productData.prime_deals)
+        setApiStatus(apiStatusConstants.success)
       }
       else{
-        console.log(`error occured`)
+        setApiStatus(apiStatusConstants.failure)
       }
       
     }
-    getProducts();
 
-    const getPrimeDeals = async () => {
-        const ApiUrl = `https://apis.ccbp.in/prime-deals`
-        // const jwtToken = Cookies.get('jwtToken')
-        const Token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJhaHVsIiwicm9sZSI6IlBSSU1FX1VTRVIiLCJpYXQiOjE2MjMwNjU1MzJ9.D13s5wN3Oh59aa_qtXMo3Ec4wojOx0EZh8Xr5C5sRkU`
-        const options = {
-          headers: {
-            Authorization: `Bearer ${Token}`,
-          },
-          method: 'GET',
-        }
-        const response = await fetch(ApiUrl,options)
-        if(response.ok){
-          const productData = await response.json()
-          console.log(productData)
-          setPrimeProductArray(productData.prime_deals)
-        }
-        else{
-          console.log(`error occured`)
-        }
-        
-      }
-      getPrimeDeals();
-  },[])
+  const getProducts = async () => {
+    setApiStatus(apiStatusConstants.inProgress)
+    const ApiUrl = `https://apis.ccbp.in/products?sort_by=${activeOptionId}&category=${activeCategoryId}&title_search=${productName}&rating=${activeRatingId}`
+    // 
+    // const jwtToken = Cookies.get('jwtToken')
+    const Token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJhaHVsIiwicm9sZSI6IlBSSU1FX1VTRVIiLCJpYXQiOjE2MjMwNjU1MzJ9.D13s5wN3Oh59aa_qtXMo3Ec4wojOx0EZh8Xr5C5sRkU`
+    const options = {
+      headers: {
+        Authorization: `Bearer ${Token}`,
+      },
+      method: 'GET',
+    }
+    const response = await fetch(ApiUrl,options)
+    if(response.ok){
+      const productData = await response.json()
+      serProductsArray(productData.products)
+      setLength(productData.products.length)
+      setApiStatus(apiStatusConstants.success)
+    }
+    else{
+      setApiStatus(apiStatusConstants.failure)
+    }
+    
+  }
+  const catchProductName = (event) => {
+    setProductName(event.target.value)
+  }
+
+ const getSearchResults = () => {
+  getProducts();
+  console.log('serach')
+
+  console.log(ProductsArray.length)
+  console.log(arrayLength)
+
+ }
+
+ const categoryId = (value) => {
+  console.log('categoryid========',value)
+ }
+
+  function renderPrimeDealsFailureView(){
+    return <img
+      src="https://assets.ccbp.in/frontend/react-js/exclusive-deals-banner-img.png"
+      alt="Register Prime"
+      className="register-prime-image"
+    />
+  }
+
+  function productsSuccessView(){
+    return(
+      <div className='grid grid-cols-1 md:grid-cols-3 gap-5'>
+        {ProductsArray.map((product) => (
+            <ProductCard product={product} key={product.id}/>
+        ))}
+    </div>
+    )
+  }
+
+  function primeDealsSuccesView(){
+    return(
+      <div className='grid grid-cols-1 md:grid-cols-3 gap-5'>
+          {PrimeProduct.map((product) => (
+              <ProductCard product={product} key={product.id}/>
+          ))}
+      </div>
+    )
+  }
+
+  function productsFinalView(){
+    switch(apiStatus){
+      case apiStatusConstants.success:
+        return productsSuccessView()
+      case apiStatusConstants.failure:
+        return <ConnectionLost/>
+      case apiStatusConstants.inProgress:
+        return <Loader/>
+      default:
+        return null
+    }
+  }
+
+  function primaryDealsView(){
+    switch(apiStatus){
+      case apiStatusConstants.success:
+        return primeDealsSuccesView()
+      case apiStatusConstants.failure:
+        return renderPrimeDealsFailureView()
+      case apiStatusConstants.inProgress:
+        return <Loader/>
+      default:
+        return null
+    }
+  }
 
   return (
-    <div className="bg-white">
+    <div>
       <div>
         {/* Mobile filter dialog */}
         <Transition.Root show={mobileFiltersOpen} as={Fragment}>
@@ -171,20 +254,15 @@ export default function Example() {
                               <div className="space-y-6">
                                 {section.options.map((option, optionIdx) => (
                                   <div key={option.value} className="flex items-center">
-                                    <input
-                                      id={`filter-mobile-${section.id}-${optionIdx}`}
-                                      name={`${section.id}[]`}
-                                      defaultValue={option.value}
-                                      type="checkbox"
-                                      defaultChecked={option.checked}
-                                      className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                    />
-                                    <label
-                                      htmlFor={`filter-mobile-${section.id}-${optionIdx}`}
-                                      className="ml-3 min-w-0 flex-1 text-gray-500"
-                                    >
-                                      {option.label}
-                                    </label>
+                                  {
+                                    option.label === 'imageUrl' ? 
+                                    <button className='flex items-center text-gray-600 font-medium'>
+                                      <img src={option.imageUrl} alt='logo' className='w-[160px] h-[28px] mr-1'/>
+                                      & up
+                                    </button> : <button className="text-sm text-gray-600 font-medium" onClick={categoryId}>
+                                    {option.label}
+                                  </button> 
+                                  }
                                   </div>
                                 ))}
                               </div>
@@ -203,14 +281,9 @@ export default function Example() {
         <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className='py-6'>
                 <h1 className="text-2xl lg:text-3xl font-bold tracking-tight text-[#475569] mb-4">Exclusive Prime Deals</h1>
-                <div className='grid grid-cols-1 md:grid-cols-3 gap-5'>
-                    {PrimeProduct.map((product) => (
-                        <ProductCard product={product} key={product.id}/>
-                    ))}
-                </div>
+                {primaryDealsView()}
             </div>
             
-
             <div className="flex items-center  justify-between border-b border-gray-200 pb-6 pt-4">
                 <h1 className="text-2xl font-bold tracking-tight text-[#475569]">All Products</h1>
                 <div className="flex items-center">
@@ -274,13 +347,10 @@ export default function Example() {
             </div>
 
             <section aria-labelledby="products-heading" className="pb-24 pt-6">
-                <h2 id="products-heading" className="sr-only">
-                Products
-                </h2>
-
+                
                 <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4">
                 {/* Filters */}
-                <form className="hidden lg:block">
+                <div className="hidden lg:block">
                     <h3 className="sr-only">Categories</h3>
                     <div className='w-[100%]'>
                         <div>
@@ -292,10 +362,11 @@ export default function Example() {
                                     id="productSearch"
                                     name="productSearch"
                                     type="text"
+                                    onChange={catchProductName}
                                     className="ml-1 !outline-none border-none border-0 placeholder:text-gray-400 w-[100%]"
                                     placeholder='Type Product Name...'
                                 />
-                                <button className='py-3 px-2 h-full' type='button'><BsSearch/></button>
+                                <button className='py-3 px-2 h-full' type='button' onClick={getSearchResults}><BsSearch/></button>
                             </div>
                         </div>
                     </div>
@@ -319,20 +390,17 @@ export default function Example() {
                             <div className="space-y-4">
                                 {section.options.map((option, optionIdx) => (
                                 <div key={option.value} className="flex items-center">
-                                    <input
-                                    id={`filter-${section.id}-${optionIdx}`}
-                                    name={`${section.id}[]`}
-                                    defaultValue={option.value}
-                                    type="checkbox"
-                                    defaultChecked={option.checked}
-                                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                    />
-                                    <label
-                                    htmlFor={`filter-${section.id}-${optionIdx}`}
-                                    className="ml-3 text-sm text-gray-600"
-                                    >
-                                    {option.label}
-                                    </label>
+                                {
+                                  option.label === 'imageUrl' ? 
+                                  <button className='flex items-center text-gray-600 font-medium'>
+                                  <img src={option.imageUrl} alt='logo' className='w-[160px] h-[28px] mr-1'/>
+                                  & up
+                                  </button>
+                                      : <button className="text-sm font-medium text-gray-600 " onClick={categoryId}>
+                                  {option.label}
+                                </button> 
+                                }
+                                                                   
                                 </div>
                                 ))}
                             </div>
@@ -341,16 +409,12 @@ export default function Example() {
                         )}
                     </Disclosure>
                     ))}
-                </form>
+                </div>
 
                 {/* Product grid */}
                 <div className="lg:col-span-3">
                 {/* Your content */}
-                    <div className='grid grid-cols-1 md:grid-cols-3 gap-5'>
-                        {ProductsArray.map((product) => (
-                            <ProductCard product={product} key={product.id}/>
-                        ))}
-                    </div>
+                    {productsFinalView()}
                 </div>
                 </div>
             </section>
@@ -360,3 +424,8 @@ export default function Example() {
   )
 }
 
+// <div>
+// <img src="https://assets.ccbp.in/frontend/react-js/nxt-trendz/nxt-trendz-no-products-view.png" class="no-products-img" alt="no products">
+// <h1>No Products Found</h1>
+// <p>We could not find any products. Try other filters.</p>
+// </div>

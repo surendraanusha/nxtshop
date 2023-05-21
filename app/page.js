@@ -5,8 +5,9 @@ import Link from "next/link"
 /* eslint-disable @next/next/no-img-element */
 
 export default function Home() {
+  
   return (
-    <div className="mx-auto max-w-7xl px-6 sm:py-20 lg:flex lg:items-center lg:gap-x-14 lg:px-8">
+    <div className="mx-auto max-w-7xl px-6 py-4 sm:py-20 lg:flex lg:items-center lg:gap-x-14 lg:px-8">
           <div className="mx-auto  lg:mx-0 lg:flex-auto flex items-center md:items-start flex-col">
             <h1 className="text-3xl text-center md:text-left font-bold tracking-tight text-[#1E293B] sm:text-6xl md:mb-6 leading-10">
               Clothes That Get YOU Noticed

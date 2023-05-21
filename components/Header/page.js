@@ -31,16 +31,20 @@ export default function Example() {
               </div>
               <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                 <div className="flex flex-shrink-0 items-center">
+                <Link href={'/'}>
                   <img
                     className="block h-8 w-auto lg:hidden"
                     src="https://assets.ccbp.in/frontend/react-js/nxt-trendz-logo-img.png"
                     alt="Your Company"
                   />
-                  <img
+                  </Link>
+                  <Link href={'/'}>
+                    <img
                     className="hidden h-8 w-auto lg:block"
                     src="https://assets.ccbp.in/frontend/react-js/nxt-trendz-logo-img.png"
                     alt="Your Company"
                   />
+                  </Link>
                 </div>
                 <div className="hidden sm:ml-14 sm:flex sm:space-x-8 items-center">
                   {/* Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" */}
