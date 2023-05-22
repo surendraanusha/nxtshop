@@ -175,7 +175,7 @@ const Cart = () => {
 
   function emptyView(){
     return(
-      <div className='flex flex-col items-center justify-center'>
+      <div className='flex flex-col items-center justify-center mt-4 md:mt-8'>
         <img src='https://assets.ccbp.in/frontend/react-js/nxt-trendz-empty-cart-img.png' alt='logo' className='w-[360px]  mb-4'/>
         <h1 className='text-[#1E293B] font-bold text-2xl mb-4'>Your Cart Is Empty</h1>
         <Link href={'/products'}>
@@ -204,14 +204,17 @@ const Cart = () => {
     <main className="mx-auto max-w-2xl px-4 pb-24 pt-16 sm:px-6 lg:max-w-7xl lg:px-8">
     <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl mb-4">Shopping Cart</h1>
     <hr className='border-b border-gray-200'/>
-    <div className="mt-12 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12 xl:gap-x-16">
+    {
+      cart.productCart.length === 0 ? emptyView() : <div className="mt-12 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12 xl:gap-x-16">
       <section aria-labelledby="cart-heading" className="lg:col-span-7">
-        {cart.productCart.length === 0 ? emptyView() : itemsView()}
+        {itemsView()}
       </section>
 
       {/* Order summary */}
       <CartSummary/>
     </div>
+    }
+    
   </main>
     </div>
   )

@@ -8,7 +8,7 @@ const ProductCard = (props) => {
     const {id,image_url,price,rating,title,brand} = product
   return (
     <Link href={`/products/${id}`}>
-        <div>
+        <div className='transition ease-in-out delay-150 hover:translate hover:shadow-xl rounded-md pb-1 hover:scale-105 duration-300'>
             <div className="min-h-80 aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
             <img
                 src={image_url}
@@ -16,7 +16,7 @@ const ProductCard = (props) => {
                 className="h-full w-full object-cover object-center lg:h-full lg:w-full rounded-md"
             />
             </div>
-            <div className="mt-4">
+            <div className="mt-2 p-1">
                 <h1 className="text-[#171F46] text-xl md:text-base lg:text-xl font-bold mt-6">{title}</h1>
                 <p className='mt-2 text-[#594D6D] font-semibold'>{brand}</p>
                 <div className='flex items-center justify-between mt-2'>

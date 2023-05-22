@@ -1,27 +1,35 @@
 /* eslint-disable @next/next/no-img-element */
-import { useContext } from 'react'
+import { useContext ,useState} from 'react'
 import { ShieldCheckIcon } from '@heroicons/react/24/outline'
 import {AiOutlineMinusSquare,AiOutlineHeart,AiOutlinePlusSquare,AiFillHeart} from 'react-icons/ai'
 import {RiDeleteBin5Line} from 'react-icons/ri'
 import {BiRupee} from 'react-icons/bi'
 import { userContext } from '@/app/layout'
+
 const CartItem = (props) => {
     const {product} = props
-    const {id,title,imageUrl,price,quantity,availability,brand} = product
+    const {id,title,imageUrl,price,quantity,availability,brand,favouriteValue} = product
     const context = useContext(userContext)
+    const [favourite,setFavourite] = useState(favouriteValue)
+    const [quan,setQuan] = useState(quantity)
 
     const deleteItem = () => {
-        console.log("product id from cart items------",id)
         context.removeItem(id)
+    }
+
+    const addFavourite = ()=>{
+      setFavourite(!favourite)
     }
 
     let itemQuantity = quantity
 
     const decreaseQuan = () =>{
+        itemQuantity -= 1
         context.decrementCartItemQuantity(id)
     }
 
     const increaseQuan = () => {
+      itemQuantity += 1
         context.incrementCartItemQuantity(id)
     }
 
@@ -75,14 +83,19 @@ const CartItem = (props) => {
           </div>
         </div>
       </div>
+      <div className="mt-4 flex items-center">
+        <p className="flex items-center space-x-2 text-sm text-gray-700">
+        <ShieldCheckIcon
+            className="mr-1 h-6 w-6 flex-shrink-0 text-green-300 group-hover:text-green-700"
+            aria-hidden="true"
+          />
+          <span className='text-sm text-gray-700'>{availability}</span>
 
-      <p className="mt-4 flex items-center space-x-2 text-sm text-gray-700">
-      <ShieldCheckIcon
-          className="mr-1 h-6 w-6 flex-shrink-0 text-green-300 group-hover:text-green-700"
-          aria-hidden="true"
-        />
-        <span className='text-sm text-gray-700'>{availability}</span>
-      </p>
+        </p>
+        <button className='px-3 py-3 ml-3 hover:bg-gray-100 cursor-pointer rounded-md' onClick={addFavourite}>
+          {favourite ?  <AiFillHeart className='h-7 w-7' fill='#f030a3'/> :  <AiOutlineHeart className='h-7 w-7' fill='#f030a3'/>}
+        </button>
+      </div>
     </div>
   </li>
     </div>

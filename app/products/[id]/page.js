@@ -73,7 +73,8 @@ const ProductDetails = (data) => {
       brand: productObj.brand,
       price: productObj.price * defaultQuantity,
       availability:productObj.availability,
-      quantity:defaultQuantity
+      quantity:defaultQuantity,
+      favouriteValue:favourite
     }
     contextFun.receiveProduct(payLoad)
     toast.success("Product added successfully!!");
@@ -179,6 +180,7 @@ const ProductDetails = (data) => {
           </section>
         </div>
         <div className='mt-6'>
+        <h1 className='text-gray-500 font-bold text-2xl mb-3'>Similar Products</h1>
           <div className='grid grid-cols-1 md:grid-cols-2 gap-5'>
             {productObj.similar_products.map((product) => (
                 <ProductCard product={product} key={product.id}/>

@@ -92,7 +92,7 @@ const CartSummary = () => {
         <dd className="text-base font-bold text-gray-900 flex items-center"><BiRupee className='font-bold'/>{orderTotal}</dd>
       </div>
       {amountInWords !== 'zero' ? <div className="flex items-center border-t border-gray-200 pt-4">
-      <dt className="text-sm font-medium text-gray-900">**Amount In words:</dt>
+      <dt className="text-sm font-medium text-gray-900">**In words:</dt>
       <dd className="text-sm font-medium text-gray-900 flex items-center ml-1">{amountInWords}</dd>
     </div> : ''}
       

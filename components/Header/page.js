@@ -1,17 +1,19 @@
 "use client"
 /* eslint-disable @next/next/no-img-element */
 
-import { Fragment } from 'react'
+import { Fragment,useContext } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import {FaUserCircle} from 'react-icons/fa'
-
+import {AiOutlineShoppingCart} from 'react-icons/ai'
+import { userContext } from '@/app/layout'
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function Example() {
+export default function Header() {
+  const contextValue = useContext(userContext)
   return (
     <Disclosure as="nav" className="bg-white shadow">
       {({ open }) => (
@@ -50,29 +52,29 @@ export default function Example() {
                   {/* Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" */}
                   <Link href={'/'}>
                     <li
-                        className="inline-flex items-center border-b-2 border-indigo-500 px-1 pt-1 text-sm font-medium text-gray-900"
+                        className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900"
                     >
                         Home
                     </li>
                   </Link>
                   <Link href={'/products'}>
                     <li
-                        className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                        className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
                     >
                         Products
-                    </li>
-                  </Link>
-                  <Link href={'/cart'}>
-                    <li
-                        className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
-                    >
-                        Cart
                     </li>
                   </Link>
                 </div>
               </div>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                 {/* Profile dropdown */}
+                <Link href={'/cart'}>
+                  <div className='mr-2 flex items-center relative '>
+                    <AiOutlineShoppingCart fill='#8d8f8f' className='hidden md:block h-8 w-8 font-bold'/>
+                    {contextValue.productCart.length !== 0 ? <p className='text-[#5c8fbf] font-bold text-sm relative -top-3 hidden md:block'>{contextValue.productCart.length}</p> : ''}
+                    
+                  </div>
+                </Link>
                 <Menu as="div" className="relative ml-3">
                   <div>
                     <Menu.Button className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">

@@ -46,9 +46,9 @@ const apiStatusConstants = {
   inProgress: 'IN_PROGRESS',
 }
 
-// function classNames(...classes) {
-//   return classes.filter(Boolean).join(' ')
-// }
+function classNames(...classes) {
+  return classes.filter(Boolean).join(' ')
+}
 
 export default function Products() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
@@ -331,10 +331,7 @@ export default function Products() {
                     </Transition>
                 </Menu>
 
-                <button type="button" className="-m-2 ml-2 p-2 text-gray-400 hover:text-gray-500 sm:ml-7">
-                    <span className="sr-only">View grid</span>
-                    <Squares2X2Icon className="h-5 w-5" aria-hidden="true" />
-                </button>
+                
                 <button
                     type="button"
                     className="-m-2 ml-4 p-2 text-gray-400 hover:text-gray-500 sm:ml-6 lg:hidden"
