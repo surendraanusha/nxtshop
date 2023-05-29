@@ -77,7 +77,7 @@ const ProductDetails = (data) => {
       favouriteValue:favourite
     }
     contextFun.receiveProduct(payLoad)
-    toast.success("Product added successfully!!");
+    toast.success("Item added successfully!!");
   }
 
   const decreaseQuantity = () => {

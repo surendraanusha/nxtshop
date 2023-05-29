@@ -3,15 +3,15 @@
 import { Fragment, useState,useEffect } from 'react'
 import { Dialog, Disclosure, Menu, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
-import { ChevronDownIcon, FunnelIcon, MinusIcon, PlusIcon, Squares2X2Icon } from '@heroicons/react/20/solid'
+import { ChevronDownIcon,ChevronUpIcon, FunnelIcon, MinusIcon, PlusIcon, } from '@heroicons/react/20/solid'
 import ProductCard from '@/components/ProductCard/page'
 import {BsSearch} from 'react-icons/bs'
 import Loader from '@/components/Loader/page'
 import ConnectionLost from '@/components/Connection/page'
 
 const sortOptions = [
-  { name: 'Price: Low to High', href: '#', current: false },
-  { name: 'Price: High to Low', href: '#', current: false },
+  { name: 'PRICE_HIGH', value:1},
+  { name: 'PRICE_LOW',value:2}
 ]
 
 const filters = [
@@ -19,21 +19,21 @@ const filters = [
     id: 'category',
     name: 'Category',
     options: [
-      { value: '1', label: 'Clothing'},
-      { value: '2', label: 'Electronics'},
-      { value: '3', label: 'Appliances'},
-      { value: '4', label: 'Grocery'},
-      { value: '5', label: 'Toys'},
+      { value: 1, label: 'Clothing'},
+      { value: 2, label: 'Electronics'},
+      { value: 3, label: 'Appliances'},
+      { value: 4, label: 'Grocery'},
+      { value: 5, label: 'Toys'},
     ],
   },
   {
     id: 'Rating',
     name: 'Rating',
     options: [
-      { value: '4', imageUrl: 'https://assets.ccbp.in/frontend/react-js/rating-four-stars-img.png',label:'imageUrl'},
-      { value: '3', imageUrl: 'https://assets.ccbp.in/frontend/react-js/rating-three-stars-img.png',label:'imageUrl'},
-      { value: '2', imageUrl: 'https://assets.ccbp.in/frontend/react-js/rating-two-stars-img.png',label:'imageUrl'},
-      { value: '1', imageUrl: 'https://assets.ccbp.in/frontend/react-js/rating-one-star-img.png',label:'imageUrl'}
+      { value: 4, imageUrl: 'https://assets.ccbp.in/frontend/react-js/rating-four-stars-img.png',label:'imageUrl'},
+      { value: 3, imageUrl: 'https://assets.ccbp.in/frontend/react-js/rating-three-stars-img.png',label:'imageUrl'},
+      { value: 2, imageUrl: 'https://assets.ccbp.in/frontend/react-js/rating-two-stars-img.png',label:'imageUrl'},
+      { value: 1, imageUrl: 'https://assets.ccbp.in/frontend/react-js/rating-one-star-img.png',label:'imageUrl'}
     ],
   },
   
@@ -56,18 +56,41 @@ export default function Products() {
   const [PrimeProduct,setPrimeProductArray] = useState([])
   const [apiStatus,setApiStatus] = useState(apiStatusConstants.initial)
   const [productName,setProductName] = useState('')
-  const [arrayLength,setLength] = useState()
+  const [titleSearch,setTitle] = useState('')
   const [activeOptionId,setActiveOptionId] = useState('')
   const [activeCategoryId,setActiveCategoryId] = useState('')
   const [activeRatingId,setActiveRatingId] = useState('')
+  const [activeCategoryCss,setActiveCategoryCss] = useState(null)
+  const [activeRatingCss,setActiveRatingCss] = useState(null)
+
+
+  const categoryId = (categoryObj) => {
+    setActiveCategoryId(categoryObj.value)
+    setActiveCategoryCss(categoryObj.value)
+   }
+  
+  const ratingFunction = (ratingObj) => {
+    setActiveRatingId(ratingObj.value)
+    setActiveRatingCss(ratingObj.value)
+  }
+
+  const catchProductName = (event) => {
+    setProductName(event.target.value)
+  }
+
+ const getSearchResults = () => {
+    setTitle(productName)
+ }
+
 
 
   useEffect(()=>{
-
     getProducts();
 
-    getPrimeDeals();
+  },[activeCategoryId,activeRatingId,titleSearch])
 
+  useEffect(()=>{
+    getPrimeDeals();
   },[])
 
   const getPrimeDeals = async () => {
@@ -96,7 +119,7 @@ export default function Products() {
 
   const getProducts = async () => {
     setApiStatus(apiStatusConstants.inProgress)
-    const ApiUrl = `https://apis.ccbp.in/products?sort_by=${activeOptionId}&category=${activeCategoryId}&title_search=${productName}&rating=${activeRatingId}`
+    const ApiUrl = `https://apis.ccbp.in/products?sort_by=${activeOptionId}&category=${activeCategoryId}&title_search=${titleSearch}&rating=${activeRatingId}`
     // 
     // const jwtToken = Cookies.get('jwtToken')
     const Token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJhaHVsIiwicm9sZSI6IlBSSU1FX1VTRVIiLCJpYXQiOjE2MjMwNjU1MzJ9.D13s5wN3Oh59aa_qtXMo3Ec4wojOx0EZh8Xr5C5sRkU`
@@ -110,7 +133,6 @@ export default function Products() {
     if(response.ok){
       const productData = await response.json()
       serProductsArray(productData.products)
-      setLength(productData.products.length)
       setApiStatus(apiStatusConstants.success)
     }
     else{
@@ -118,22 +140,8 @@ export default function Products() {
     }
     
   }
-  const catchProductName = (event) => {
-    setProductName(event.target.value)
-  }
 
- const getSearchResults = () => {
-  getProducts();
-  console.log('serach')
 
-  console.log(ProductsArray.length)
-  console.log(arrayLength)
-
- }
-
- const categoryId = (value) => {
-  console.log('categoryid========',value)
- }
 
   function renderPrimeDealsFailureView(){
     return <img
@@ -189,6 +197,16 @@ export default function Products() {
     }
   }
 
+  function EmptyView(){
+    return(
+      <div className='flex flex-col items-center justify-center'>
+      <img src="https://assets.ccbp.in/frontend/react-js/nxt-trendz/nxt-trendz-no-products-view.png" class="no-products-img mb-2" alt="no products"/>
+      <h1 className='text-[#171F46] font-semibold text-2xl mb-2'>No Products Found</h1>
+      <p className='text-[#7a879b] font-medium text-xl text-center'>We could not find any products. Try other filters.</p>
+      </div>
+    )
+  }
+
   return (
     <div>
       <div>
@@ -231,7 +249,7 @@ export default function Products() {
                   </div>
 
                   {/* Filters */}
-                  <form className="mt-4 border-t border-gray-200">
+                  <div className="mt-4 border-t border-gray-200">
                     <h3 className="sr-only">Categories</h3>
                    
                     {filters.map((section) => (
@@ -256,10 +274,10 @@ export default function Products() {
                                   <div key={option.value} className="flex items-center">
                                   {
                                     option.label === 'imageUrl' ? 
-                                    <button className='flex items-center text-gray-600 font-medium'>
+                                    <button className={`flex items-center ${activeRatingCss === option.value ? `text-[#2d83cf]` : `text-gray-600`} font-medium`} onClick={() => ratingFunction(option)}>
                                       <img src={option.imageUrl} alt='logo' className='w-[160px] h-[28px] mr-1'/>
                                       & up
-                                    </button> : <button className="text-sm text-gray-600 font-medium" onClick={categoryId}>
+                                    </button> : <button className={`${activeCategoryCss === option.value ? `text-[#2d83cf]` : `text-gray-600`} text-sm font-medium`} onClick={() => categoryId(option)}>
                                     {option.label}
                                   </button> 
                                   }
@@ -271,7 +289,7 @@ export default function Products() {
                         )}
                       </Disclosure>
                     ))}
-                  </form>
+                  </div>
                 </Dialog.Panel>
               </Transition.Child>
             </div>
@@ -289,14 +307,17 @@ export default function Products() {
                 <div className="flex items-center">
                 <Menu as="div" className="relative inline-block text-left">
                     <div>
-                    <Menu.Button className="group inline-flex justify-center text-md font-medium text-gray-700 hover:text-gray-900">
-                        <ChevronDownIcon
-                        className="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
-                        aria-hidden="true"
-                        />
-                        Sort
-                        
-                    </Menu.Button>
+                      <Menu.Button className="group inline-flex justify-center items-center text-md font-medium text-gray-700 hover:text-gray-900">
+                          <ChevronDownIcon
+                          className="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
+                          aria-hidden="true"
+                          />
+                          Sort
+                          <ChevronUpIcon
+                          className="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
+                          aria-hidden="true"
+                          />
+                      </Menu.Button>
                     </div>
 
                     <Transition
@@ -343,7 +364,7 @@ export default function Products() {
                 </div>
             </div>
 
-            <section aria-labelledby="products-heading" className="pb-24 pt-6">
+            <section aria-labelledby="products-heading" className={`pb-24 ${ProductsArray.length === 0 ? `pt-20` : `pt-6`}`}>
                 
                 <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4">
                 {/* Filters */}
@@ -354,16 +375,11 @@ export default function Products() {
                             <label htmlFor="productSearch" className="block text-md font-medium leading-6 text-gray-900">
                             Search product...
                             </label>
-                            <div className="mt-2 flex items-center justify-between border py-1 border-gray-400 rounded-md">
-                                <input
-                                    id="productSearch"
-                                    name="productSearch"
-                                    type="text"
-                                    onChange={catchProductName}
-                                    className="ml-1 !outline-none border-none border-0 placeholder:text-gray-400 w-[100%]"
-                                    placeholder='Type Product Name...'
-                                />
-                                <button className='py-3 px-2 h-full' type='button' onClick={getSearchResults}><BsSearch/></button>
+                            <div className="mt-2 flex items-center justify-between border border-gray-400 rounded-md">
+                                <input placeholder='Search Product here...' className='ml-1 !outline-none border-none text-gray-400 border-0 placeholder:text-gray-400 w-[100%]' onChange={catchProductName}/>
+                                <button className='py-3 px-2 h-full bg-gray-400 rounded-r-md border-r border-gray-400' type='button' onClick={getSearchResults}>
+                                  <BsSearch/>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -389,11 +405,11 @@ export default function Products() {
                                 <div key={option.value} className="flex items-center">
                                 {
                                   option.label === 'imageUrl' ? 
-                                  <button className='flex items-center text-gray-600 font-medium'>
+                                  <button className={`flex items-center ${activeRatingCss === option.value ? `text-[#2d83cf]` : `text-gray-600`} font-medium`} onClick={() => ratingFunction(option)}>
                                   <img src={option.imageUrl} alt='logo' className='w-[160px] h-[28px] mr-1'/>
                                   & up
                                   </button>
-                                      : <button className="text-sm font-medium text-gray-600 " onClick={categoryId}>
+                                      : <button className={`${activeCategoryCss === option.value ? `text-[#2d83cf]` : `text-gray-600`} text-sm font-medium`} onClick={() => categoryId(option)}>
                                   {option.label}
                                 </button> 
                                 }
@@ -411,7 +427,7 @@ export default function Products() {
                 {/* Product grid */}
                 <div className="lg:col-span-3">
                 {/* Your content */}
-                    {productsFinalView()}
+                {ProductsArray.length === 0 && titleSearch !== '' ? EmptyView() : productsFinalView()}
                 </div>
                 </div>
             </section>
@@ -420,9 +436,3 @@ export default function Products() {
     </div>
   )
 }
-
-// <div>
-// <img src="https://assets.ccbp.in/frontend/react-js/nxt-trendz/nxt-trendz-no-products-view.png" class="no-products-img" alt="no products">
-// <h1>No Products Found</h1>
-// <p>We could not find any products. Try other filters.</p>
-// </div>
