@@ -1,54 +1,59 @@
 /* eslint-disable @next/next/no-img-element */
 
+
+import { useState ,useEffect,Fragment } from "react"
+import ProductCard from "../ProductCard/page"
+import Loader from "../Loader/page"
+
 const apiStatusConstants = {
     initial: 'INITIAL',
     success: 'SUCCESS',
     failure: 'FAILURE',
     inProgress: 'IN_PROGRESS',
-  }
-import { useState ,useEffect } from "react"
-import ProductCard from "../ProductCard/page"
-import Loader from "../Loader/page"
+}
 
 const PrimeDeals = () => {
   const [PrimeProduct,setPrimeProductArray] = useState([])
   const [apiStatus,setApiStatus] = useState(apiStatusConstants.initial)
 
   useEffect(()=>{
-    const getPrimeDeals = async () => {
-        setApiStatus(apiStatusConstants.inProgress)
-          const ApiUrl = `https://apis.ccbp.in/prime-deals`
-          // const jwtToken = Cookies.get('jwtToken')
-          const Token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJhaHVsIiwicm9sZSI6IlBSSU1FX1VTRVIiLCJpYXQiOjE2MjMwNjU1MzJ9.D13s5wN3Oh59aa_qtXMo3Ec4wojOx0EZh8Xr5C5sRkU`
-          const options = {
-            headers: {
-              Authorization: `Bearer ${Token}`,
-            },
-            method: 'GET',
-          }
-          const response = await fetch(ApiUrl,options)
-          if(response.ok){
-            const productData = await response.json()
-            console.log("primecomponent",productData)
-            setPrimeProductArray(productData.prime_deals)
-            setApiStatus(apiStatusConstants.success)
-          }
-          else{
-            setApiStatus(apiStatusConstants.failure)
-          }
-          
-      }
       getPrimeDeals();
   },[])
+
+  const getPrimeDeals = async () => {
+    setApiStatus(apiStatusConstants.inProgress)
+      const ApiUrl = `https://apis.ccbp.in/prime-deals`
+      // const jwtToken = Cookies.get('jwtToken')
+      const Token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJhaHVsIiwicm9sZSI6IlBSSU1FX1VTRVIiLCJpYXQiOjE2MjMwNjU1MzJ9.D13s5wN3Oh59aa_qtXMo3Ec4wojOx0EZh8Xr5C5sRkU`
+      const options = {
+        headers: {
+          Authorization: `Bearer ${Token}`,
+        },
+        method: 'GET',
+      }
+      const response = await fetch(ApiUrl,options)
+      if(response.ok){
+        const productData = await response.json()
+        setPrimeProductArray(productData.prime_deals)
+        setApiStatus(apiStatusConstants.success)
+      }
+      else{
+        setApiStatus(apiStatusConstants.failure)
+      }
+      
+  }
 
   
 
 function primeDealsSuccesView(){
-    <div className='grid grid-cols-1 md:grid-cols-3 gap-5'>
-        {PrimeProduct.map((product) => (
-            <ProductCard product={product} key={product.id}/>
-        ))}
-    </div>
+    return(
+        <div className='grid grid-cols-1 md:grid-cols-3 gap-5'>
+            {PrimeProduct.map((product) => (
+                <ProductCard product={product} key={product.id}/>
+            ))}
+        </div>
+    )
+    
 }
 
 function renderPrimeDealsFailureView(){
@@ -74,10 +79,9 @@ function renderPrimeDealsFailureView(){
 
 
   return (
-    <div>
-    <p>hello primary</p>
+    <Fragment>
         {primaryDealsFinalView()}
-    </div>
+    </Fragment>
   )
 }
 

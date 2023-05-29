@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client"
 import { useState,useEffect, Fragment,useContext,useRef } from 'react'
-import { CheckIcon, QuestionMarkCircleIcon, StarIcon } from '@heroicons/react/20/solid'
+import { QuestionMarkCircleIcon } from '@heroicons/react/20/solid'
 import { ShieldCheckIcon } from '@heroicons/react/24/outline'
 import {BiRupee} from 'react-icons/bi'
 import {AiFillStar} from 'react-icons/ai'
@@ -11,11 +11,9 @@ import ConnectionLost from '@/components/Connection/page'
 import Loader from '@/components/Loader/page'
 import ProductCard from '@/components/ProductCard/page'
 import { userContext } from '@/app/layout'
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-
-const reviews = { average: 4, totalCount: 1624 }
 
 const apiStatusConstants = {
   initial: 'INITIAL',
@@ -71,13 +69,12 @@ const ProductDetails = (data) => {
       imageUrl: productObj.image_url,
       title: productObj.title,
       brand: productObj.brand,
-      price: productObj.price * defaultQuantity,
+      price: productObj.price,
       availability:productObj.availability,
       quantity:defaultQuantity,
       favouriteValue:favourite
     }
     contextFun.receiveProduct(payLoad)
-    toast.success("Item added successfully!!");
   }
 
   const decreaseQuantity = () => {

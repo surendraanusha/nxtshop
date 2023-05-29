@@ -3,31 +3,33 @@
 import './globals.css'
 import { Inter } from 'next/font/google'
 const inter = Inter({ subsets: ['latin'] })
-// import Header from '../components/Header'
 import Header from '../components/Header/page'
 import { useState,createContext } from 'react'
+
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 export const userContext = createContext()
 export default function RootLayout({ children }) {
   const [productCart,setCartItems] = useState([])
 
   const receiveProduct = (cartItemObj) =>{
-    const productObj = productCart.find(eachCartItem => eachCartItem.id === cartItemObj.id )
-    if(productObj){
-      console.log('yes product is availble')
-      // setCartItems(prevState =>([
-      //   prevState.productCart.map(eachCartItem =>{
-      //     if(productObj.id === eachCartItem.id){
-      //       const updatedQuantity = eachCartItem.quantity + cartItemObj.quantity
-      //       return {...eachCartItem,quantity:updatedQuantity}
-      //     }
-      //     return eachCartItem
-      //   })
-      // ]))
+    const existingItem = productCart.find((item) => item.id === cartItemObj.id);
+    if(existingItem){
+      const updatedItems = productCart.map((item) => {
+        if (item.id === cartItemObj.id) {
+          return { ...item, quantity: item.quantity + cartItemObj.quantity };
+        }
+        return item;
+      });
+      setCartItems(updatedItems);
+      toast.success("Item updated successfully!!");
     }
     else{
       setCartItems(prevStatue =>[
         ...prevStatue,cartItemObj
       ])
+      toast.success("Item added successfully!!");
     }
     
   }
@@ -35,36 +37,61 @@ export default function RootLayout({ children }) {
   let Amount = 0
   let shippingCharges = 5.00
   let taxEstimation = 10.00
+
   productCart.forEach(eachCartItem => {
-    Amount += eachCartItem.price 
+    Amount += eachCartItem.price * eachCartItem.quantity
   })
 
   const removeItem = (id) =>{
     const updatedCartList = productCart.filter(
       eachCartItem => eachCartItem.id !== id,
-    )
-    setCartItems(updatedCartList)
+      )
+      setCartItems(updatedCartList)
+      toast.warning("Item remove successfully!!");
   }
 
   const decrementCartItemQuantity = (id) =>{
-    console.log('received product id',id)
-
+    const updatedItems = productCart.map((cartItem) => {
+      if (cartItem.id === id && cartItem.quantity > 1) {
+        return { ...cartItem, quantity: cartItem.quantity - 1 };
+      }
+      return cartItem;
+    });
+    setCartItems(updatedItems);
   }
 
   const incrementCartItemQuantity = (id) =>{
-    console.log('received product id',id)
+    const updatedItems = productCart.map((cartItem) => {
+      if (cartItem.id === id) {
+        return { ...cartItem, quantity: cartItem.quantity + 1 };
+      }
+      return cartItem;
+    });
+    setCartItems(updatedItems);
   }
 
   const ContextObj = {
-    receiveProduct,productCart,removeItem,Amount,shippingCharges,taxEstimation,decrementCartItemQuantity,incrementCartItemQuantity
+    receiveProduct,
+    productCart,
+    removeItem,
+    Amount,
+    shippingCharges,
+    taxEstimation,
+    decrementCartItemQuantity,
+    incrementCartItemQuantity
   }
+
+  
 
   return (
     <html lang="en">
       <body className={inter.className}>
       <userContext.Provider value={ContextObj} >
-        <Header/>  
-        {children}
+        <Header/>
+        <div className='pt-20'>
+          {children}
+        </div>
+        
       </userContext.Provider>
     </body>
     </html>

@@ -5,31 +5,29 @@ import {AiOutlineMinusSquare,AiOutlineHeart,AiOutlinePlusSquare,AiFillHeart} fro
 import {RiDeleteBin5Line} from 'react-icons/ri'
 import {BiRupee} from 'react-icons/bi'
 import { userContext } from '@/app/layout'
+import { ToastContainer ,toast} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const CartItem = (props) => {
     const {product} = props
     const {id,title,imageUrl,price,quantity,availability,brand,favouriteValue} = product
     const context = useContext(userContext)
     const [favourite,setFavourite] = useState(favouriteValue)
-    const [quan,setQuan] = useState(quantity)
 
     const deleteItem = () => {
         context.removeItem(id)
+        toast.warning('Item removed Successfully!!')
     }
 
     const addFavourite = ()=>{
       setFavourite(!favourite)
     }
 
-    let itemQuantity = quantity
-
     const decreaseQuan = () =>{
-        itemQuantity -= 1
         context.decrementCartItemQuantity(id)
     }
 
     const increaseQuan = () => {
-      itemQuantity += 1
         context.incrementCartItemQuantity(id)
     }
 
@@ -60,12 +58,12 @@ const CartItem = (props) => {
           
           <div className="flex items-center">
             <p className='text-[#171F46] font-semibold text-lg'>Quantity:</p>
-            <p className="text-[#171F46] font-semibold ml-1"> {itemQuantity}</p>
+            <p className="text-[#171F46] font-semibold ml-1"> {quantity}</p>
           </div>
 
           <div className='mt-1 flex items-center'>
               <BiRupee fill='#171F46'/>
-              <p className='text-[#171F46] font-semibold'>{price}/-</p>
+              <p className='text-[#171F46] font-semibold'>{price * quantity}/-</p>
           </div>
         </div>
 
@@ -80,6 +78,7 @@ const CartItem = (props) => {
             <button type="button" className="-m-2 mt-1 mr-[3px] inline-flex text-gray-400 hover:text-gray-500" onClick={deleteItem}>
               <RiDeleteBin5Line className="h-6 w-6" fill='#7E7281' />
             </button>
+            <ToastContainer />
           </div>
         </div>
       </div>

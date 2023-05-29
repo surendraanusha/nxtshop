@@ -8,6 +8,8 @@ import ProductCard from '@/components/ProductCard/page'
 import {BsSearch} from 'react-icons/bs'
 import Loader from '@/components/Loader/page'
 import ConnectionLost from '@/components/Connection/page'
+import PrimeDeals from '@/components/PrimeDeals/page'
+import {HiChevronDoubleUp} from 'react-icons/hi'
 
 const sortOptions = [
   { name: 'PRICE_HIGH', value:1},
@@ -46,9 +48,9 @@ const apiStatusConstants = {
   inProgress: 'IN_PROGRESS',
 }
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
-}
+  function classNames(...classes) {
+    return classes.filter(Boolean).join(' ')
+  }
 
 export default function Products() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
@@ -58,10 +60,13 @@ export default function Products() {
   const [productName,setProductName] = useState('')
   const [titleSearch,setTitle] = useState('')
   const [activeOptionId,setActiveOptionId] = useState('')
+  const [activeOptionCss,setActiveOptionCss] = useState(null)
   const [activeCategoryId,setActiveCategoryId] = useState('')
   const [activeRatingId,setActiveRatingId] = useState('')
   const [activeCategoryCss,setActiveCategoryCss] = useState(null)
   const [activeRatingCss,setActiveRatingCss] = useState(null)
+  const [isVisible, setIsVisible] = useState(false);
+
 
 
   const categoryId = (categoryObj) => {
@@ -81,41 +86,28 @@ export default function Products() {
  const getSearchResults = () => {
     setTitle(productName)
  }
-
-
+ const catchSortOption = (sortObj) => {
+  setActiveOptionId(sortObj.name)
+  setActiveOptionCss(sortObj.name)
+ }
 
   useEffect(()=>{
     getProducts();
+    
+    const handleScroll = () => {
+      const scrollThreshold = 500; // Adjust this value as needed
+      const shouldShowButton = window.pageYOffset > scrollThreshold;
+      setIsVisible(shouldShowButton);
+    };
 
-  },[activeCategoryId,activeRatingId,titleSearch])
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+    
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[activeCategoryId, activeRatingId, titleSearch, activeOptionId])
 
-  useEffect(()=>{
-    getPrimeDeals();
-  },[])
-
-  const getPrimeDeals = async () => {
-    setApiStatus(apiStatusConstants.inProgress)
-      const ApiUrl = `https://apis.ccbp.in/prime-deals`
-      // const jwtToken = Cookies.get('jwtToken')
-      const Token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJhaHVsIiwicm9sZSI6IlBSSU1FX1VTRVIiLCJpYXQiOjE2MjMwNjU1MzJ9.D13s5wN3Oh59aa_qtXMo3Ec4wojOx0EZh8Xr5C5sRkU`
-      const options = {
-        headers: {
-          Authorization: `Bearer ${Token}`,
-        },
-        method: 'GET',
-      }
-      const response = await fetch(ApiUrl,options)
-      if(response.ok){
-        const productData = await response.json()
-        // console.log(productData)
-        setPrimeProductArray(productData.prime_deals)
-        setApiStatus(apiStatusConstants.success)
-      }
-      else{
-        setApiStatus(apiStatusConstants.failure)
-      }
-      
-    }
 
   const getProducts = async () => {
     setApiStatus(apiStatusConstants.inProgress)
@@ -141,16 +133,6 @@ export default function Products() {
     
   }
 
-
-
-  function renderPrimeDealsFailureView(){
-    return <img
-      src="https://assets.ccbp.in/frontend/react-js/exclusive-deals-banner-img.png"
-      alt="Register Prime"
-      className="register-prime-image"
-    />
-  }
-
   function productsSuccessView(){
     return(
       <div className='grid grid-cols-1 md:grid-cols-3 gap-5'>
@@ -158,16 +140,6 @@ export default function Products() {
             <ProductCard product={product} key={product.id}/>
         ))}
     </div>
-    )
-  }
-
-  function primeDealsSuccesView(){
-    return(
-      <div className='grid grid-cols-1 md:grid-cols-3 gap-5'>
-          {PrimeProduct.map((product) => (
-              <ProductCard product={product} key={product.id}/>
-          ))}
-      </div>
     )
   }
 
@@ -184,19 +156,6 @@ export default function Products() {
     }
   }
 
-  function primaryDealsView(){
-    switch(apiStatus){
-      case apiStatusConstants.success:
-        return primeDealsSuccesView()
-      case apiStatusConstants.failure:
-        return renderPrimeDealsFailureView()
-      case apiStatusConstants.inProgress:
-        return <Loader/>
-      default:
-        return null
-    }
-  }
-
   function EmptyView(){
     return(
       <div className='flex flex-col items-center justify-center'>
@@ -206,6 +165,14 @@ export default function Products() {
       </div>
     )
   }
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth', // Add smooth scrolling behavior
+    });
+  };
+ 
 
   return (
     <div>
@@ -247,7 +214,7 @@ export default function Products() {
                       <XMarkIcon className="h-6 w-6" aria-hidden="true" />
                     </button>
                   </div>
-
+                  
                   {/* Filters */}
                   <div className="mt-4 border-t border-gray-200">
                     <h3 className="sr-only">Categories</h3>
@@ -299,68 +266,58 @@ export default function Products() {
         <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className='py-6'>
                 <h1 className="text-2xl lg:text-3xl font-bold tracking-tight text-[#475569] mb-4">Exclusive Prime Deals</h1>
-                {primaryDealsView()}
+                <PrimeDeals/>
             </div>
             
-            <div className="flex items-center  justify-between border-b border-gray-200 pb-6 pt-4">
-                <h1 className="text-2xl font-bold tracking-tight text-[#475569]">All Products</h1>
-                <div className="flex items-center">
-                <Menu as="div" className="relative inline-block text-left">
-                    <div>
-                      <Menu.Button className="group inline-flex justify-center items-center text-md font-medium text-gray-700 hover:text-gray-900">
-                          <ChevronDownIcon
-                          className="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
-                          aria-hidden="true"
-                          />
-                          Sort
-                          <ChevronUpIcon
-                          className="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
-                          aria-hidden="true"
-                          />
-                      </Menu.Button>
-                    </div>
+            <div className="flex justify-between items-center w-full   border-b border-gray-200 pb-6 pt-4">
+                <h1 className="text-2xl lg:text-3xl font-bold tracking-tight text-[#475569]">All Products</h1>
+                <div className="flex items-center justify-between">
+                  <Menu as="div" className="relative inline-block text-left">
+                      <div>
+                        <Menu.Button className="group inline-flex justify-center items-center text-md font-medium text-gray-700 hover:text-gray-900">
+                            Sort by 
+                            <ChevronDownIcon
+                            className="h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
+                            aria-hidden="true"
+                            />
+                        </Menu.Button>
+                      </div>
 
-                    <Transition
-                    as={Fragment}
-                    enter="transition ease-out duration-100"
-                    enterFrom="transform opacity-0 scale-95"
-                    enterTo="transform opacity-100 scale-100"
-                    leave="transition ease-in duration-75"
-                    leaveFrom="transform opacity-100 scale-100"
-                    leaveTo="transform opacity-0 scale-95"
-                    >
-                    <Menu.Items className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        <div className="py-1">
-                        {sortOptions.map((option) => (
-                            <Menu.Item key={option.name}>
-                            {({ active }) => (
-                                <a
-                                href={option.href}
-                                className={classNames(
-                                    option.current ? 'font-medium text-gray-900' : 'text-gray-500',
-                                    active ? 'bg-gray-100' : '',
-                                    'block px-4 py-2 text-sm'
-                                )}
-                                >
-                                {option.name}
-                                </a>
-                            )}
-                            </Menu.Item>
-                        ))}
-                        </div>
-                    </Menu.Items>
-                    </Transition>
-                </Menu>
-
-                
-                <button
-                    type="button"
-                    className="-m-2 ml-4 p-2 text-gray-400 hover:text-gray-500 sm:ml-6 lg:hidden"
-                    onClick={() => setMobileFiltersOpen(true)}
-                >
-                    <span className="sr-only">Filters</span>
-                    <FunnelIcon className="h-5 w-5" aria-hidden="true" />
-                </button>
+                      <Transition
+                      as={Fragment}
+                      enter="transition ease-out duration-100"
+                      enterFrom="transform opacity-0 scale-95"
+                      enterTo="transform opacity-100 scale-100"
+                      leave="transition ease-in duration-75"
+                      leaveFrom="transform opacity-100 scale-100"
+                      leaveTo="transform opacity-0 scale-95"
+                      >
+                      <Menu.Items className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none">
+                          <div className="py-1">
+                          {sortOptions.map((option) => (
+                              <Menu.Item key={option.name}>
+                              {({ active }) => (
+                                  <span
+                                  className={`block px-4 py-2 text-sm cursor-pointer hover:bg-gray-300 ${activeOptionCss === option.name ? `bg-gray-300 font-bold text-[#2d83cf]`:`text-black`}`}
+                                  onClick={()=>catchSortOption(option)}
+                                  >
+                                  {option.name}
+                                  </span>
+                              )}
+                              </Menu.Item>
+                          ))}
+                          </div>
+                      </Menu.Items>
+                      </Transition>
+                  </Menu>
+                  <button
+                      type="button"
+                      className="-m-2 ml-4 p-2 text-gray-400 hover:text-gray-500 sm:ml-6 lg:hidden"
+                      onClick={() => setMobileFiltersOpen(true)}
+                  >
+                      <span className="sr-only">Filters</span>
+                      <FunnelIcon className="h-5 w-5" aria-hidden="true" />
+                  </button>
                 </div>
             </div>
 
@@ -376,7 +333,7 @@ export default function Products() {
                             Search product...
                             </label>
                             <div className="mt-2 flex items-center justify-between border border-gray-400 rounded-md">
-                                <input placeholder='Search Product here...' className='ml-1 !outline-none border-none text-gray-400 border-0 placeholder:text-gray-400 w-[100%]' onChange={catchProductName}/>
+                                <input placeholder='Search products here' className='ml-1 !outline-none border-none text-gray-400 border-0 placeholder:text-gray-400 w-[100%]' onChange={catchProductName}/>
                                 <button className='py-3 px-2 h-full bg-gray-400 rounded-r-md border-r border-gray-400' type='button' onClick={getSearchResults}>
                                   <BsSearch/>
                                 </button>
@@ -422,7 +379,22 @@ export default function Products() {
                         )}
                     </Disclosure>
                     ))}
+                    <button className='mt-4 border border-cyan-500 rounded-md text-cyan-500 py-2 px-2 hover:bg-sky-400 hover:text-white'>Clear Filters</button>
                 </div>
+
+                <div className='w-[100%] block md:hidden'>
+                        <div>
+                            <label htmlFor="productSearch" className="block text-md font-medium leading-6 text-gray-900">
+                            Search product...
+                            </label>
+                            <div className="mt-2 flex items-center justify-between border border-gray-400 rounded-md">
+                                <input placeholder='Search products here' className='ml-1 !outline-none border-none text-gray-400 border-0 placeholder:text-gray-400 w-[100%]' onChange={catchProductName}/>
+                                <button className='py-3 px-2 h-full bg-gray-400 rounded-r-md border-r border-gray-400' type='button' onClick={getSearchResults}>
+                                  <BsSearch/>
+                                </button>
+                            </div>
+                        </div>
+                  </div>
 
                 {/* Product grid */}
                 <div className="lg:col-span-3">
@@ -432,7 +404,12 @@ export default function Products() {
                 </div>
             </section>
         </main>
+        <button className={`fixed bottom-4 right-4 p-4 rounded-full bg-cyan-400 text-white ${isVisible ? 'block' : 'hidden'}`} onClick={scrollToTop}>
+          <HiChevronDoubleUp fill='#fff' height={5} width={5}/>
+        </button>
       </div>
     </div>
   )
 }
+
+
