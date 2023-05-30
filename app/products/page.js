@@ -78,6 +78,7 @@ export default function Products() {
   }
 
   const catchProductName = (event) => {
+    console.log(event.target.value)
     setProductName(event.target.value)
   }
 
@@ -106,6 +107,15 @@ export default function Products() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[activeCategoryId, activeRatingId, titleSearch, activeOptionId])
 
+  const clearFilters = () => {
+    setActiveCategoryId('')
+    setActiveRatingId('')
+    setProductName('')
+    setTitle('')
+    setActiveOptionId('')
+    setActiveCategoryCss(null)
+    setActiveRatingCss(null)
+  }
 
   const getProducts = async () => {
     setApiStatus(apiStatusConstants.inProgress)
@@ -189,7 +199,7 @@ export default function Products() {
             <div className="fixed inset-0 bg-black bg-opacity-25" />
           </Transition.Child>
 
-          <div className="fixed inset-0 z-40 flex">
+          <div className="fixed inset-0 z-50 flex">
             <Transition.Child
               as={Fragment}
               enter="transition ease-in-out duration-300 transform"
@@ -326,11 +336,11 @@ export default function Products() {
                   <h3 className="sr-only">Categories</h3>
                   <div className='w-[100%]'>
                       <div>
-                          <label htmlFor="productSearch" className="block text-md font-medium leading-6 text-gray-900">
-                          Search product...
-                          </label>
+                          <span className="block text-md font-medium leading-6 text-gray-900">
+                          Search products...
+                          </span>
                           <div className="mt-2 flex items-center justify-between border border-gray-400 rounded-md">
-                              <input placeholder='Search products here' className='ml-1 !outline-none border-none text-gray-400 border-0 placeholder:text-gray-400 w-[100%]' onChange={catchProductName}/>
+                              <input  type='text' value={productName} placeholder='Search products here' className='focus:outline-none focus:ring-0 ml-1  text-gray-400 border-0 placeholder:text-gray-400 w-[100%]' onChange={catchProductName}/>
                               <button className='py-3 px-2 h-full bg-gray-400 rounded-r-md border-r border-gray-400' type='button' onClick={getSearchResults}>
                                 <BsSearch/>
                               </button>
@@ -342,7 +352,8 @@ export default function Products() {
                       {({ open }) => (
                       <Fragment>
                           <h3 className="-my-3 flow-root">
-                          <Disclosure.Button className="flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500">
+                            <Disclosure.Button className="flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500"
+                            >
                               <span className="font-medium text-base text-[#12022F]">{section.name}</span>
                               <span className="ml-6 flex items-center">
                               {open ? (
@@ -351,7 +362,7 @@ export default function Products() {
                                   <PlusIcon className="h-5 w-5" aria-hidden="true" />
                               )}
                               </span>
-                          </Disclosure.Button>
+                            </Disclosure.Button>
                           </h3>
                           <Disclosure.Panel className="pt-6">
                           <div className="space-y-4">
@@ -376,16 +387,16 @@ export default function Products() {
                       )}
                   </Disclosure>
                   ))}
-                  <button className='mt-4 border border-cyan-500 rounded-md text-cyan-500 py-2 px-2 hover:bg-sky-400 hover:text-white'>Clear Filters</button>
+                  <button onClick={clearFilters} className='mt-4 border border-cyan-500 rounded-md text-cyan-500 py-2 px-2 hover:bg-sky-400 hover:text-white'>Clear Filters</button>
               </div>
-
+              {/* for mobiles search input code here */}
               <div className='w-[100%] block md:hidden'>
                       <div>
                           <label htmlFor="productSearch" className="block text-md font-medium leading-6 text-gray-900">
-                          Search product...
+                          Search products...
                           </label>
                           <div className="mt-2 flex items-center justify-between border border-gray-400 rounded-md">
-                              <input placeholder='Search products here' className='ml-1 !outline-none border-none text-gray-400 border-0 placeholder:text-gray-400 w-[100%]' onChange={catchProductName}/>
+                              <input type='text' value={productName} placeholder='Search products here' className='ml-1 focus:outline-none focus:ring-0 text-gray-400 placeholder:text-gray-400 w-[100%]' onChange={catchProductName}/>
                               <button className='py-3 px-2 h-full bg-gray-400 rounded-r-md border-r border-gray-400' type='button' onClick={getSearchResults}>
                                 <BsSearch/>
                               </button>
