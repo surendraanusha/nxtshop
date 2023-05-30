@@ -90,6 +90,7 @@ export default function RootLayout({ children }) {
     if (token === undefined) {
       router.push('/login');
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
 
