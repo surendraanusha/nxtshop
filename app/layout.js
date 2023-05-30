@@ -38,7 +38,7 @@ export default function RootLayout({ children }) {
     }
     
   }
-//  console.log(token)
+
   let Amount = 0
   let shippingCharges = 5.00
   let taxEstimation = 10.00
@@ -90,8 +90,7 @@ export default function RootLayout({ children }) {
     if (token === undefined) {
       router.push('/login');
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]); // Empty dependency array to run the effect only once
+  }, [token]);
 
 
   return (
