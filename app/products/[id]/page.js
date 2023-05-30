@@ -13,7 +13,7 @@ import ProductCard from '@/components/ProductCard/page'
 import { userContext } from '@/app/layout'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import Cookies from 'js-cookie'
 
 const apiStatusConstants = {
   initial: 'INITIAL',
@@ -36,10 +36,11 @@ const ProductDetails = (data) => {
 
     const getProductDetils = async() =>{
       setApiStatus(apiStatusConstants.inProgress)
-      const Token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJhaHVsIiwicm9sZSI6IlBSSU1FX1VTRVIiLCJpYXQiOjE2MjMwNjU1MzJ9.D13s5wN3Oh59aa_qtXMo3Ec4wojOx0EZh8Xr5C5sRkU`
+      const jwtToken = Cookies.get('jwtToken')
+      // const Token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJhaHVsIiwicm9sZSI6IlBSSU1FX1VTRVIiLCJpYXQiOjE2MjMwNjU1MzJ9.D13s5wN3Oh59aa_qtXMo3Ec4wojOx0EZh8Xr5C5sRkU`
       const options = {
           headers: {
-            Authorization: `Bearer ${Token}`,
+            Authorization: `Bearer ${jwtToken}`,
           },
           method: 'GET',
         }

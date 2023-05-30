@@ -4,7 +4,7 @@
 import { useState ,useEffect,Fragment } from "react"
 import ProductCard from "../ProductCard/page"
 import Loader from "../Loader/page"
-
+import Cookies from 'js-cookie'
 const apiStatusConstants = {
     initial: 'INITIAL',
     success: 'SUCCESS',
@@ -23,11 +23,11 @@ const PrimeDeals = () => {
   const getPrimeDeals = async () => {
     setApiStatus(apiStatusConstants.inProgress)
       const ApiUrl = `https://apis.ccbp.in/prime-deals`
-      // const jwtToken = Cookies.get('jwtToken')
-      const Token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJhaHVsIiwicm9sZSI6IlBSSU1FX1VTRVIiLCJpYXQiOjE2MjMwNjU1MzJ9.D13s5wN3Oh59aa_qtXMo3Ec4wojOx0EZh8Xr5C5sRkU`
+      const jwtToken = Cookies.get('jwtToken')
+      // const Token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJhaHVsIiwicm9sZSI6IlBSSU1FX1VTRVIiLCJpYXQiOjE2MjMwNjU1MzJ9.D13s5wN3Oh59aa_qtXMo3Ec4wojOx0EZh8Xr5C5sRkU`
       const options = {
         headers: {
-          Authorization: `Bearer ${Token}`,
+          Authorization: `Bearer ${jwtToken}`,
         },
         method: 'GET',
       }

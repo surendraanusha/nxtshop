@@ -4,13 +4,18 @@ import './globals.css'
 import { Inter } from 'next/font/google'
 const inter = Inter({ subsets: ['latin'] })
 import Header from '../components/Header/page'
-import { useState,createContext } from 'react'
-
+import { useState,createContext,useEffect } from 'react'
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Cookies from 'js-cookie'
+import { useRouter,usePathname } from 'next/navigation';
 
 export const userContext = createContext()
+
 export default function RootLayout({ children }) {
+  const loginPathName = usePathname();
+  const token = Cookies.get('jwtToken')
+  const router = useRouter(); 
   const [productCart,setCartItems] = useState([])
 
   const receiveProduct = (cartItemObj) =>{
@@ -33,7 +38,7 @@ export default function RootLayout({ children }) {
     }
     
   }
- 
+//  console.log(token)
   let Amount = 0
   let shippingCharges = 5.00
   let taxEstimation = 10.00
@@ -81,19 +86,26 @@ export default function RootLayout({ children }) {
     incrementCartItemQuantity
   }
 
-  
+  useEffect(() => {
+    if (token === undefined) {
+      router.push('/login');
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]); // Empty dependency array to run the effect only once
+
 
   return (
     <html lang="en">
       <body className={inter.className}>
-      <userContext.Provider value={ContextObj} >
-        <Header/>
-        <div className='pt-20'>
-          {children}
-        </div>
-        
-      </userContext.Provider>
-    </body>
+        <userContext.Provider value={ContextObj} >
+        {loginPathName === '/login' ? null : <Header/>}
+          <div className={`${loginPathName === '/login' ? '':'pt-20'}`}>
+            {children}
+          </div>
+        </userContext.Provider>
+      </body>
     </html>
   )
+    
+  
 }
