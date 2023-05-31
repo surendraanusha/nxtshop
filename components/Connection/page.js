@@ -5,7 +5,7 @@ const ConnectionLost = () => {
     const imageUrl = `https://assets.ccbp.in/frontend/react-js/nxt-watch-failure-view-light-theme-img.png`
 
   return (
-    <div className='h-full flex flex-col justify-center items-center'>
+    <div className='h-[80vh] flex flex-col justify-center items-center'>
         <div className='h-full flex flex-col justify-center items-center p-3 md:p-0'> 
             <img src={imageUrl} alt='connection-lost' className='h-80 mb-4 w-auto'/>
             <h1 className={`text-[#1C293A] font-sans text-lg md:text-3xl font-bold mb-2`}>Oops! Something Went Wrong</h1>
