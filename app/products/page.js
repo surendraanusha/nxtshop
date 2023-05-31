@@ -263,6 +263,7 @@ export default function Products() {
                       )}
                     </Disclosure>
                   ))}
+                  <button onClick={clearFilters} className='mt-4 ml-4 border border-cyan-500 rounded-md text-cyan-500 py-2 px-2 hover:bg-sky-400 hover:text-white'>Clear Filters</button>
                 </div>
               </Dialog.Panel>
             </Transition.Child>
@@ -390,16 +391,16 @@ export default function Products() {
                   <button onClick={clearFilters} className='mt-4 border border-cyan-500 rounded-md text-cyan-500 py-2 px-2 hover:bg-sky-400 hover:text-white'>Clear Filters</button>
               </div>
               {/* for mobiles search input code here */}
-              <div className='w-[100%] block md:hidden'>
+              <div className='w-[100%] md:w-[50%] block lg:hidden'>
                       <div>
-                          <label htmlFor="productSearch" className="block text-md font-medium leading-6 text-gray-900">
+                          <span className="block text-md font-medium leading-6 text-gray-900">
                           Search products...
-                          </label>
+                          </span>
                           <div className="mt-2 flex items-center justify-between border border-gray-400 rounded-md">
-                              <input type='text' value={productName} placeholder='Search products here' className='ml-1 focus:outline-none focus:ring-0 text-gray-400 placeholder:text-gray-400 w-[100%]' onChange={catchProductName}/>
-                              <button className='py-3 px-2 h-full bg-gray-400 rounded-r-md border-r border-gray-400' type='button' onClick={getSearchResults}>
+                          <input  type='text' value={productName} placeholder='Search products here' className='focus:outline-none focus:ring-0 ml-1  text-gray-400 border-0 placeholder:text-gray-400 w-[100%] ' onChange={catchProductName}/>
+                          <button className='py-3 px-2 h-full bg-gray-400 rounded-r-md border-r border-gray-400' type='button' onClick={getSearchResults}>
                                 <BsSearch/>
-                              </button>
+                          </button>
                           </div>
                       </div>
                 </div>
