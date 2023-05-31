@@ -21,7 +21,7 @@ const filters = [
     id: 'category',
     name: 'Category',
     options: [
-      { value: 1, label: 'Clothing'},
+      { value: 1, label: 'Cloths'},
       { value: 2, label: 'Electronics'},
       { value: 3, label: 'Appliances'},
       { value: 4, label: 'Grocery'},
