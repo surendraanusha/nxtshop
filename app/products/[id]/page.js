@@ -14,6 +14,7 @@ import { userContext } from '@/app/layout'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Cookies from 'js-cookie'
+import {useParams } from 'next/navigation';
 
 const apiStatusConstants = {
   initial: 'INITIAL',
@@ -24,15 +25,17 @@ const apiStatusConstants = {
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
-const ProductDetails = (data) => {
+const ProductDetails = () => {
     const [productObj,setProductObj] = useState({})
     const [favourite,setFavourite] = useState(false)
     const [defaultQuantity,setQuantity] = useState(1)
-    const productId = data.params.id
     const [apiStatus,setApiStatus] = useState(apiStatusConstants.initial)
     const contextFun = useContext(userContext)
+    const pd = useParams();
+    const productId = pd.id
 
   useEffect(()=>{
+    
 
     const getProductDetils = async() =>{
       setApiStatus(apiStatusConstants.inProgress)
@@ -79,7 +82,13 @@ const ProductDetails = (data) => {
   }
 
   const decreaseQuantity = () => {
-    setQuantity(defaultQuantity - 1)
+    if(defaultQuantity > 1){
+      setQuantity(defaultQuantity - 1)
+    }
+    else{
+      alert(`You can't decrease the quantity below one `)
+    }
+    
   }
 
 
@@ -213,21 +222,3 @@ const ProductDetails = (data) => {
 
 
 export default ProductDetails;
-
-async function getServerSideProps(context) {
-    const {params} = context
-    const id = params.id
-    // Fetch data from external API
-    // const Token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJhaHVsIiwicm9sZSI6IlBSSU1FX1VTRVIiLCJpYXQiOjE2MjMwNjU1MzJ9.D13s5wN3Oh59aa_qtXMo3Ec4wojOx0EZh8Xr5C5sRkU`
-    // const options = {
-    //     headers: {
-    //       Authorization: `Bearer ${Token}`,
-    //     },
-    //     method: 'GET',
-    //   }
-    // const res = await fetch(`https://apis.ccbp.in/products/${2}`,options);
-    // const data = await res.json();
-    // console.log("product details===========>",data)
-    // Pass data to the page via props
-    return { props: { data } };
-  }
