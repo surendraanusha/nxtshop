@@ -214,7 +214,7 @@ const ProductDetails = (data) => {
 
 export default ProductDetails;
 
-export async function getServerSideProps(context) {
+async function getServerSideProps(context) {
     const {params} = context
     const id = params.id
     // Fetch data from external API
